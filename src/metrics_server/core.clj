@@ -53,10 +53,11 @@
         measures (:body response)
         parsed (json/read-str measures :key-fn keyword)
         components (:components parsed)
-        as-list (map (fn [entry]
-                       {:key (:key entry)
-                        :name (:name entry)
-                        :value (get-in entry [:measures 0 :value])})
+        as-list (map (fn [{:keys [key name]
+                           [{:keys [value]}] :measures}]
+                       {:key key
+                        :name name
+                        :value value})
                      components)]
     (->> as-list
          (filter #(some? (:value %)))
