@@ -44,18 +44,15 @@
                (fetch-metric project-id metric page-size (inc page))
                this-page)))))
 
-(defn fetch-categorized-complexity [config]
-  (let [project-id (:project-id config)
-        page-size (:page-size config)
-        orange (:complexity-orange-threshold config)
+(defn compute-categorized-complexity [config metrics-data]
+  (let [orange (:complexity-orange-threshold config)
         red (:complexity-red-threshold config)
-        components (fetch-metric project-id "complexity" page-size)
         interesting-part (map (fn [{:keys [key name]
                                     [{:keys [value]}] :measures}]
                                 {:key key
                                  :name name
                                  :value value})
-                              components)]
+                              metrics-data)]
     (->> interesting-part
          (filter #(some? (:value %)))
          (filter #(not (str/includes? (:name %) "/")))
@@ -68,7 +65,10 @@
 (defn -main []
   (let [config (load-config)]
     (reset! auth-token (:token config))
-    (let [complexity (fetch-categorized-complexity config)]
+    (let [project-id (:project-id config)
+          page-size (:page-size config)
+          metrics-data (fetch-metric project-id "complexity" page-size)
+          complexity (compute-categorized-complexity config metrics-data)]
       ;; (pprint complexity)
       (println "Project key:" (:project-id config))
       (println "Complexity:")
