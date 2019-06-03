@@ -1,0 +1,5 @@
+{:token "<redacted>"
+ :project-id "<redacted>"
+ :page-size 100
+ :complexity-orange-threshold 9
+ :complexity-red-threshold 15}
