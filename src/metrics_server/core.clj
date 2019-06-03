@@ -18,26 +18,6 @@
 (def measures-component "/api/measures/component")
 (def measures-component-tree "/api/measures/component_tree")
 
-(defn get-user-tokens []
-  (let [response (client/get (url token-search) basic-auth)
-        user-tokens (:body response)]
-    (pprint (json/read-str user-tokens :key-fn keyword))))
-
-(defn get-analyses []
-  (let [response (client/get (url project-analyses-search)
-                             (merge basic-auth
-                                    {:query-params {:project project-id}}))
-        analyses (:body response)]
-    (pprint (json/read-str analyses :key-fn keyword))))
-
-(defn get-component []
-  (let [response (client/get (url measures-component)
-                             (merge basic-auth
-                                    {:query-params {:component project-id
-                                                    :metricKeys "ncloc,complexity"}}))
-        measures (:body response)]
-    (pprint (json/read-str measures :key-fn keyword))))
-
 (defn categorize [entry]
   (let [value (:value entry)]
     (cond
@@ -87,9 +67,6 @@
 
 (defn -main
   [& args]
-  #_(get-user-tokens)
-  #_(get-analyses)
-  #_(get-component)
   (let [tree (get-component-tree)]
     (pprint tree)
     (println "Total:" (count tree) "components.")))
