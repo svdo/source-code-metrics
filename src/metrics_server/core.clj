@@ -8,6 +8,7 @@
 (def token "<redacted>")
 (def projectId "<redacted>")
 (def basic-auth {:basic-auth (str token ":")})
+(def page-size 100)
 
 (defn url [endpoint]
   (str "<redacted>" endpoint))
@@ -25,14 +26,14 @@
 (defn get-analyses []
   (let [response (client/get (url project-analyses-search)
                              (merge basic-auth
-                                    {:query-params {:project projectId}}))
+                                    {:query-params {:project project-id}}))
         analyses (:body response)]
     (pprint (json/read-str analyses :key-fn keyword))))
 
 (defn get-component []
   (let [response (client/get (url measures-component)
                              (merge basic-auth
-                                    {:query-params {:component projectId
+                                    {:query-params {:component project-id
                                                     :metricKeys "ncloc,complexity"}}))
         measures (:body response)]
     (pprint (json/read-str measures :key-fn keyword))))
@@ -40,26 +41,42 @@
 (defn categorize [entry]
   (let [value (:value entry)]
     (cond
-      (< value 9) :green
+      (< value 9)  :green
       (< value 15) :orange
-      :else :red)))
+      :else        :red)))
+
+(defn raw-metric-page [project-id metric page page-size]
+  (client/get (url measures-component-tree)
+              (merge basic-auth
+                     {:query-params {:component project-id
+                                     :metricKeys metric
+                                     :p page
+                                     :ps page-size}})))
+
+(defn is-last-page [{:keys [pageIndex pageSize total]}]
+  (> (* pageIndex pageSize) total))
+
+(defn fetch-metric
+  ([project-id metric] (fetch-metric project-id metric 1))
+  ([project-id metric page]
+   (let [response (raw-metric-page project-id metric page page-size)
+         measures (:body response)
+         parsed (json/read-str measures :key-fn keyword)
+         this-page (:components parsed)]
+     (pprint (:paging parsed))
+     (if (is-last-page (:paging parsed))
+       this-page
+       (reduce conj (fetch-metric project-id metric (inc page)) this-page)))))
 
 (defn get-component-tree []
-  (let [response (client/get (url measures-component-tree)
-                             (merge basic-auth
-                                    {:query-params {:component projectId
-                                                    :metricKeys "complexity"
-                                                    :ps 499}}))
-        measures (:body response)
-        parsed (json/read-str measures :key-fn keyword)
-        components (:components parsed)
-        as-list (map (fn [{:keys [key name]
-                           [{:keys [value]}] :measures}]
-                       {:key key
-                        :name name
-                        :value value})
-                     components)]
-    (->> as-list
+  (let [components (fetch-metric project-id "complexity")
+        interesting-part (map (fn [{:keys [key name]
+                                    [{:keys [value]}] :measures}]
+                                {:key key
+                                 :name name
+                                 :value value})
+                              components)]
+    (->> interesting-part
          (filter #(some? (:value %)))
          (filter #(not (str/includes? (:name %) "/")))
          (map #(update-in % [:value] read-string))
