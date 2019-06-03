@@ -31,3 +31,12 @@
        (reduce conj
                (fetch-metric metric config (inc page))
                this-page)))))
+
+
+(comment
+  (def measures-component "/api/measures/component")
+  (def config (metrics-server.config/load-config))
+  (client/get (url measures-component)
+              {:basic-auth (str (:token config) ":")
+               :query-params {:component (:project-id config)
+                              :metricKeys "ncloc,new_coverage"}}))
