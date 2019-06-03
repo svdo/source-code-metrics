@@ -18,11 +18,14 @@
 (def measures-component "/api/measures/component")
 (def measures-component-tree "/api/measures/component_tree")
 
+(def complexity-orange-threshold 9)
+(def complexity-red-threshold 15)
+
 (defn categorize [entry]
   (let [value (:value entry)]
     (cond
-      (< value 9)  :green
-      (< value 15) :orange
+      (< value complexity-orange-threshold)  :green
+      (< value complexity-red-threshold) :orange
       :else        :red)))
 
 (defn raw-metric-page [project-id metric page page-size]
