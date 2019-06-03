@@ -71,6 +71,7 @@
     (reset! auth-token (:token config))
     (let [complexity (fetch-categorized-complexity config)]
       ;; (pprint complexity)
+      (println "Project key:" (:project-id config))
       (println "Complexity:")
       (println "  green:" (count (:green complexity)))
       (println "  orange:" (count (:orange complexity)))
