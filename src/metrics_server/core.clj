@@ -6,7 +6,6 @@
             [clojure.data.json :as json]
             [metrics-server.config :refer (load-config)]))
 
-(def config (atom nil))
 (def auth-token (atom nil))
 
 (defn basic-auth [] {:basic-auth (str @auth-token ":")})
