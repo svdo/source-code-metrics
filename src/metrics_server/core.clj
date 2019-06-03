@@ -1,7 +1,7 @@
 (ns metrics-server.core
   (:gen-class)
   (:require [clj-http.client :as client]
-            [clojure.pprint :refer [pprint]]
+            ; [clojure.pprint :refer [pprint]]
             [clojure.string :as str]
             [clojure.data.json :as json]))
 
@@ -43,12 +43,12 @@
          measures (:body response)
          parsed (json/read-str measures :key-fn keyword)
          this-page (:components parsed)]
-     (pprint (:paging parsed))
+     ;; (pprint (:paging parsed))
      (if (is-last-page (:paging parsed))
        this-page
        (reduce conj (fetch-metric project-id metric (inc page)) this-page)))))
 
-(defn get-component-tree []
+(defn categorize-complexity []
   (let [components (fetch-metric project-id "complexity")
         interesting-part (map (fn [{:keys [key name]
                                     [{:keys [value]}] :measures}]
@@ -65,8 +65,10 @@
          (reverse)
          (group-by :category))))
 
-(defn -main
-  [& args]
-  (let [tree (get-component-tree)]
-    (pprint tree)
-    (println "Total:" (count tree) "components.")))
+(defn -main []
+  (let [complexity (categorize-complexity)]
+    ;; (pprint complexity)
+    (println "Complexity:")
+    (println "  green:" (count (:green complexity)))
+    (println "  orange:" (count (:orange complexity)))
+    (println "  red:" (count (:red complexity)))))
