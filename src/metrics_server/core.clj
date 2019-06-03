@@ -4,8 +4,7 @@
             ; [clojure.pprint :refer [pprint]]
             [clojure.string :as str]
             [clojure.data.json :as json]
-            [clojure.java.io :as io]
-            [clojure.edn :as edn]))
+            [metrics-server.config :refer (load-config)]))
 
 (def config (atom nil))
 (def auth-token (atom nil))
@@ -67,20 +66,8 @@
          (reverse)
          (group-by :category))))
 
-(defn load-edn
-  "Load edn from an io/reader source (filename or io/resource)."
-  [source]
-  (try
-    (with-open [r (io/reader source)]
-      (edn/read (java.io.PushbackReader. r)))
-
-    (catch java.io.IOException e
-      (printf "Couldn't open '%s': %s\n" source (.getMessage e)))
-    (catch RuntimeException e
-      (printf "Error parsing edn file '%s': %s\n" source (.getMessage e)))))
-
 (defn -main []
-  (let [config (load-edn "config.edn")]
+  (let [config (load-config)]
     (reset! auth-token (:token config))
     (let [complexity (fetch-categorized-complexity config)]
       ;; (pprint complexity)
