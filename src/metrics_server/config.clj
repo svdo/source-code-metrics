@@ -14,5 +14,12 @@
     (catch RuntimeException e
       (printf "Error parsing edn file '%s': %s\n" source (.getMessage e)))))
 
+(defn load-edn! [source]
+  (try
+    (load-edn source)
+    (catch Exception e {})))
+
 (defn load-config []
-  (load-edn "config.edn"))
+  (let [config (load-edn "config.edn")
+        local-config (load-edn! "config.local.edn")]
+    (merge config local-config)))
