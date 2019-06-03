@@ -1,5 +1,5 @@
-{:token "<redacted>"
- :project-id "<redacted>"
+{:token "<your SonarQube access token>"
+ :project-id "<your SonarQube project key>"
  :page-size 100
  :complexity-orange-threshold 9
  :complexity-red-threshold 15}
