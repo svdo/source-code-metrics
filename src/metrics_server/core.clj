@@ -5,7 +5,6 @@
             [clojure.data.json :as json]
             [metrics-server.config :refer (load-config)]))
 
-(defn basic-auth [token] {:basic-auth (str token ":")})
 (defn url [endpoint] (str "<redacted>" endpoint))
 (def measures-component-tree "/api/measures/component_tree")
 
@@ -19,11 +18,11 @@
 
 (defn raw-metric-page [project-id metric page page-size token]
   (client/get (url measures-component-tree)
-              (merge (basic-auth token)
-                     {:query-params {:component project-id
-                                     :metricKeys metric
-                                     :p page
-                                     :ps page-size}})))
+              {:basic-auth (str token ":")
+               :query-params {:component project-id
+                              :metricKeys metric
+                              :p page
+                              :ps page-size}}))
 
 (defn is-last-page [{:keys [pageIndex pageSize total]}]
   (> (* pageIndex pageSize) total))
