@@ -1,8 +1,10 @@
 (ns metrics-server.sonar-fetcher
   (:require [clj-http.client :as client]
+            [clojure.string :as str]
             [clojure.data.json :as json]))
 
 (defn url [endpoint] (str "<redacted>" endpoint))
+(def measures-component "/api/measures/component")
 (def measures-component-tree "/api/measures/component_tree")
 
 (defn raw-metric-page [project-id metric page page-size token]
@@ -17,8 +19,8 @@
 (defn is-last-page [{:keys [pageIndex pageSize total]}]
   (> (* pageIndex pageSize) total))
 
-(defn fetch-metric
-  ([metric config] (fetch-metric metric config 1))
+(defn fetch-file-tree-metric
+  ([metric config] (fetch-file-tree-metric metric config 1))
   ([metric config page]
    (let [project-id (:project-id config)
          page-size (:page-size config)
@@ -30,14 +32,28 @@
      (if (is-last-page (:paging parsed))
        this-page
        (reduce conj
-               (fetch-metric metric config (inc page))
+               (fetch-file-tree-metric metric config (inc page))
                this-page)))))
 
+(defn raw-metrics [project-id metrics token]
+  (client/get (url measures-component)
+              {:basic-auth (str token ":")
+               :query-params {:component project-id
+                              :metricKeys metrics}}))
+
+(defn fetch-project-metrics [metrics config]
+  (let [project-id (:project-id config)
+        token (:token config)
+        response (raw-metrics project-id (str/join "," metrics) token)
+        measures (:body response)
+        parsed (json/read-str measures :key-fn keyword)]
+    (:component parsed)))
 
 (comment
-  (def measures-component "/api/measures/component")
+  (require '[clojure.string :as str])
   (def config (metrics-server.config/load-config))
   (client/get (url measures-component)
               {:basic-auth (str (:token config) ":")
                :query-params {:component (:project-id config)
-                              :metricKeys "ncloc,new_coverage"}}))
+                              :metricKeys "ncloc,new_coverage"}})
+  (fetch-project-metrics ["ncloc" "new_coverage"] config))
