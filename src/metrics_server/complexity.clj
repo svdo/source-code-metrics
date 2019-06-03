@@ -1,5 +1,4 @@
-(ns metrics-server.complexity
-  (:require [clojure.string :as str]))
+(ns metrics-server.complexity)
 
 (defn extract-relevant-fields [{:keys [key name]
                                 [{:keys [value]}] :measures}]
@@ -13,9 +12,6 @@
 (defn has-a-value [entry]
   (some? (:value entry)))
 
-(defn is-a-file [entry]
-  (not (str/includes? (:name entry) "/")))
-
 (defn categorize-complexity-number
   [entry {:keys [complexity-orange-threshold complexity-red-threshold]}]
   (let [value (:value entry)]
@@ -28,7 +24,6 @@
   (let [interesting-part (map extract-relevant-fields metrics-data)]
     (->> interesting-part
          (filter has-a-value)
-         (filter is-a-file)
          (map value-string-to-number)
          (map #(assoc % :category (categorize-complexity-number % config)))
          (sort-by :value)

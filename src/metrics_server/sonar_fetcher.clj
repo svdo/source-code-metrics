@@ -11,7 +11,8 @@
                :query-params {:component project-id
                               :metricKeys metric
                               :p page
-                              :ps page-size}}))
+                              :ps page-size
+                              :strategy "leaves"}}))
 
 (defn is-last-page [{:keys [pageIndex pageSize total]}]
   (> (* pageIndex pageSize) total))
