@@ -11,7 +11,7 @@
         project-metrics (project/metrics project-data)
         complexity-data (sonar/fetch-file-tree-metric "complexity" config)
         complexity (complexity/categorize complexity-data config)]
-    (println "Project key:" (:project-id config))
+    (println "SonarQube project key:" (:sonar-project-id config))
     (println "Complexity:")
     (println "  Number of files:" (:files project-metrics))
     (println "  Sum of complexity:" (:complexity project-metrics))

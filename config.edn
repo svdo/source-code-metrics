@@ -1,5 +1,5 @@
-{:token "<your SonarQube access token>"
- :project-id "<your SonarQube project key>"
+{:sonar-token ""                 ;; your SonarQube access token
+ :sonar-project-id ""            ;; your SonarQube project key
  :page-size 100
  :complexity-orange-threshold 9
  :complexity-red-threshold 15}
