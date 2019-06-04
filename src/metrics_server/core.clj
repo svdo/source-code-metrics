@@ -13,8 +13,8 @@
         complexity (complexity/categorize complexity-data config)]
     (println "Project key:" (:project-id config))
     (println "Coverage:")
-    (println "  overall:" (:coverage project-metrics))
-    (println "  new code:" (:new-coverage project-metrics))
+    (println "  overall:" (format "%.1f" (:coverage project-metrics)))
+    (println "  new code:" (format "%.1f" (:new-coverage project-metrics)))
     (println "Complexity:")
     (println "  green:" (count (:green complexity)))
     (println "  orange:" (count (:orange complexity)))
