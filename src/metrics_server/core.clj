@@ -7,6 +7,11 @@
             [metrics-server.gitlab-fetcher :as gitlab]
             [metrics-server.churn :as churn]))
 
+(defn format-if-present [flt]
+  (if flt
+    (format "%.1f" flt)
+    "n/a"))
+
 (defn -main []
   (let [config (load-config)
         sonar-data (sonar/fetch-project-metrics ["files" "complexity" "coverage" "new_coverage"] config)
@@ -23,8 +28,8 @@
     (println "  orange:" (count (:orange complexity)))
     (println "  red:" (count (:red complexity)))
     (println "Coverage:")
-    (println "  overall:" (format "%.1f" (:coverage sonar-metrics)))
-    (println "  new code:" (format "%.1f" (:new-coverage sonar-metrics)))
+    (println "  overall:" (format-if-present (:coverage sonar-metrics)))
+    (println "  new code:" (format-if-present (:new-coverage sonar-metrics)))
     (println "Churn:")
     (println "  number of commits:" (format "%d" (:count churn)))
     (println "  number of lines added:" (format "%d" (:lines-added churn)))
