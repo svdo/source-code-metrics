@@ -6,5 +6,11 @@
 (def sample-commit-data
   (load-edn! "./test/metrics_server/sample_commit_data.edn"))
 
-(deftest number-of-commits
-  (is (= 8 (:count (summarize sample-commit-data)))))
+(deftest number-of-non-merge-commits
+  (is (= 4 (:count (summarize sample-commit-data)))))
+
+(deftest number-of-lines-added
+  (is (= 919 (:lines-added (summarize sample-commit-data)))))
+
+(deftest number-of-lines-deleted
+  (is (= 589 (:lines-deleted (summarize sample-commit-data)))))
