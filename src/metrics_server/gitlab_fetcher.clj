@@ -31,7 +31,8 @@
     (client/get commit-url
                 {:query-params {:private_token token
                                 :since (date-to-string from)
-                                :until (date-to-string to)}})))
+                                :until (date-to-string to)
+                                :with_stats true}})))
 
 (defn fetch-commit-details
   ([config]
