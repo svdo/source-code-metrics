@@ -8,8 +8,9 @@ Configuration
 
 The file `config.edn` contains configurable things, including the SonarQube
 project key. The token must be generated in SonarQube (My Account -> Security
--> Generate Token). The current token is my own for testing purposes, please
-don't abuse.
+-> Generate Token). A second token that is needed is for GitLab. You can
+generate that token by navigating in GitLab to Account -> Settings ->
+Access Tokens. Enable the scope 'api' for this token.
 
 In order to keep your secrets safe, you may choose to put them in
 `config.local.edn` instead of `config.edn`. The two maps are merged, where

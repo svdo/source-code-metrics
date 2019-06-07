@@ -1,5 +1,7 @@
 {:sonar-token ""                 ;; your SonarQube access token
  :sonar-project-id ""            ;; your SonarQube project key
+ :gitlab-token ""                ;; your GitLab personal access token
+ :gitlab-project-id 0            ;; your GitLab project ID number
  :page-size 100
  :complexity-orange-threshold 9
  :complexity-red-threshold 15}
