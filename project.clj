@@ -8,4 +8,5 @@
                  [org.clojure/data.json "0.2.6"]]
   :main ^:skip-aot metrics-server.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}}
+  :middleware [ultra.plugin/middleware])
