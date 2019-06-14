@@ -1,9 +1,9 @@
 (ns metrics-server.complexity)
 
-(defn extract-relevant-fields [{:keys [key name]
+(defn extract-relevant-fields [{:keys             [key name]
                                 [{:keys [value]}] :measures}]
-  {:key key
-   :name name
+  {:key   key
+   :name  name
    :value value})
 
 (defn value-string-to-number [entry]

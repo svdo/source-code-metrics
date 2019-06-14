@@ -11,8 +11,8 @@
   (let [interesting-part (->> commit-data
                               (filter is-not-merge-commit?)
                               (map extract-relevant-fields))
-        lines-added (reduce + (map :additions interesting-part))
-        lines-deleted (reduce + (map :deletions interesting-part))]
-    {:count (count interesting-part)
-     :lines-added lines-added
+        lines-added      (reduce + (map :additions interesting-part))
+        lines-deleted    (reduce + (map :deletions interesting-part))]
+    {:count         (count interesting-part)
+     :lines-added   lines-added
      :lines-deleted lines-deleted}))

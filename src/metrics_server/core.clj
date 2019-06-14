@@ -13,13 +13,13 @@
     "n/a"))
 
 (defn -main []
-  (let [config (load-config)
-        sonar-data (sonar/fetch-project-metrics ["files" "complexity" "coverage" "new_coverage"] config)
-        sonar-metrics (project/metrics sonar-data)
+  (let [config          (load-config)
+        sonar-data      (sonar/fetch-project-metrics ["files" "complexity" "coverage" "new_coverage"] config)
+        sonar-metrics   (project/metrics sonar-data)
         complexity-data (sonar/fetch-file-tree-metric "complexity" config)
-        complexity (complexity/categorize complexity-data config)
-        commit-data (gitlab/fetch-commit-details config)
-        churn (churn/summarize commit-data)]
+        complexity      (complexity/categorize complexity-data config)
+        commit-data     (gitlab/fetch-commit-details config)
+        churn           (churn/summarize commit-data)]
     (println "SonarQube project key:" (:sonar-project-id config))
     (println "Complexity:")
     (println "  Number of files:" (:files sonar-metrics))
