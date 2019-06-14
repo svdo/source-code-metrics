@@ -8,33 +8,33 @@
            java.time.LocalDate
            java.time.DayOfWeek))
 
-(def zone-id (. ZoneId systemDefault))
-(def formatter (. DateTimeFormatter ISO_OFFSET_DATE_TIME))
+(def zone-id (ZoneId/systemDefault))
+(def formatter (DateTimeFormatter/ISO_OFFSET_DATE_TIME))
 (defn date-to-string [date-time]
   (-> date-time
-      (. atStartOfDay)
-      (. atZone zone-id)
-      (. format formatter)))
+      (.atStartOfDay)
+      (.atZone zone-id)
+      (.format formatter)))
 (def last-monday
-  (-> (. LocalDate now)
-      (. with (. TemporalAdjusters previousOrSame DayOfWeek/MONDAY))))
+  (-> (LocalDate/now)
+      (.with (TemporalAdjusters/previousOrSame DayOfWeek/MONDAY))))
 (def before-last-monday
   (-> last-monday
-      (. with (. TemporalAdjusters previous DayOfWeek/MONDAY))))
+      (.with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
-(defn url [endpoint] (str "<redacted>" endpoint))
-(defn commits [project-id]
+(defn- url [endpoint] (str "<redacted>" endpoint))
+(defn- commits [project-id]
   (format "/projects/%s/repository/commits" project-id))
 
-(defn parse-link [link]
+(defn- parse-link [link]
   (let [[_ url key] (re-matches #".*<(.*)>;.*rel=\"(.*)\".*" link)]
     {(keyword key) url}))
 
-(defn parse-link-header [link-header]
+(defn- parse-link-header [link-header]
   (let [links (clojure.string/split link-header #", ")]
     (reduce merge {} (mapv parse-link links))))
 
-(defn parse-measures
+(defn- parse-measures
   ([project-id from to token]
    (parse-measures project-id from to token (url (commits project-id))))
   ([project-id from to token commits-page-url]
@@ -67,7 +67,7 @@
 
   (def before-before-last-monday
     (-> before-last-monday
-        (. with (. TemporalAdjusters previous DayOfWeek/MONDAY))))
+        (.with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
   (parse-measures (:gitlab-project-id config)
                   before-before-last-monday

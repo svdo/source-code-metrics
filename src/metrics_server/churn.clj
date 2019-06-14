@@ -1,10 +1,10 @@
 (ns metrics-server.churn)
 
-(defn extract-relevant-fields [{{:keys [additions deletions]} :stats}]
+(defn- extract-relevant-fields [{{:keys [additions deletions]} :stats}]
   {:additions additions
    :deletions deletions})
 
-(defn is-not-merge-commit? [commit-entry]
+(defn- is-not-merge-commit? [commit-entry]
   (= 1 (count (:parent_ids commit-entry))))
 
 (defn summarize [commit-data]

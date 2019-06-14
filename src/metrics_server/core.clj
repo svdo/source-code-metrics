@@ -7,7 +7,7 @@
             [metrics-server.gitlab-fetcher :as gitlab]
             [metrics-server.churn :as churn]))
 
-(defn format-if-present [flt]
+(defn- format-if-present [flt]
   (if flt
     (format "%.1f" flt)
     "n/a"))

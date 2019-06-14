@@ -1,18 +1,18 @@
 (ns metrics-server.complexity)
 
-(defn extract-relevant-fields [{:keys             [key name]
-                                [{:keys [value]}] :measures}]
+(defn- extract-relevant-fields [{:keys             [key name]
+                                 [{:keys [value]}] :measures}]
   {:key   key
    :name  name
    :value value})
 
-(defn value-string-to-number [entry]
+(defn- value-string-to-number [entry]
   (update-in entry [:value] read-string))
 
-(defn has-a-value [entry]
+(defn- has-a-value [entry]
   (some? (:value entry)))
 
-(defn categorize-complexity-number
+(defn- categorize-complexity-number
   [entry {:keys [complexity-orange-threshold complexity-red-threshold]}]
   (let [value (:value entry)]
     (condp < value

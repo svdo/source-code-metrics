@@ -3,11 +3,11 @@
             [clojure.string :as str]
             [clojure.data.json :as json]))
 
-(defn url [endpoint] (str "<redacted>" endpoint))
-(def measures-component "/api/measures/component")
-(def measures-component-tree "/api/measures/component_tree")
+(defn- url [endpoint] (str "<redacted>" endpoint))
+(def ^:private measures-component "/api/measures/component")
+(def ^:private measures-component-tree "/api/measures/component_tree")
 
-(defn raw-metric-page [project-id metric page page-size token]
+(defn- raw-metric-page [project-id metric page page-size token]
   (client/get (url measures-component-tree)
               {:basic-auth   (str token ":")
                :query-params {:component  project-id
@@ -16,7 +16,7 @@
                               :ps         page-size
                               :strategy   "leaves"}}))
 
-(defn is-last-page [{:keys [pageIndex pageSize total]}]
+(defn- is-last-page [{:keys [pageIndex pageSize total]}]
   (> (* pageIndex pageSize) total))
 
 (defn fetch-file-tree-metric
@@ -35,7 +35,7 @@
                (fetch-file-tree-metric metric config (inc page))
                this-page)))))
 
-(defn raw-metrics [project-id metrics token]
+(defn- raw-metrics [project-id metrics token]
   (client/get (url measures-component)
               {:basic-auth   (str token ":")
                :query-params {:component  project-id
