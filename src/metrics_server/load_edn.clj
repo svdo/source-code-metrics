@@ -17,4 +17,4 @@
 (defn load-edn! [source]
   (try
     (load-edn source)
-    (catch Exception e {})))
+    (catch Exception _ {})))
