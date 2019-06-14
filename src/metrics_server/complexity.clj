@@ -15,10 +15,10 @@
 (defn categorize-complexity-number
   [entry {:keys [complexity-orange-threshold complexity-red-threshold]}]
   (let [value (:value entry)]
-    (cond
-      (< value complexity-orange-threshold) :green
-      (< value complexity-red-threshold)    :orange
-      :else                                 :red)))
+    (condp < value
+      complexity-orange-threshold :green
+      complexity-red-threshold    :orange
+      :red)))
 
 (defn categorize [metrics-data config]
   (let [interesting-part (map extract-relevant-fields metrics-data)]
