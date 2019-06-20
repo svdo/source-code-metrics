@@ -1,7 +1,33 @@
 (ns metrics-server.config
-  (:require [metrics-server.load-edn :refer (load-edn load-edn!)]))
+  (:require [metrics-server.load-edn :refer (load-edn load-edn!)]
+            [clojure.spec.alpha :as s]))
+
+(s/def :sonar/token (s/and string? (complement empty?)))
+(s/def :sonar/project-id (s/and string? (complement empty?)))
+(s/def :gitlab/token (s/and string? (complement empty?)))
+(s/def :gitlab/project-id pos-int?)
+(s/def ::config
+  (s/keys :req [:sonar/token
+                :sonar/project-id
+                :gitlab/token
+                :gitlab/project-id
+                :fetch/page-size
+                :complexity/orange-threshold
+                :complexity/red-threshold]))
 
 (defn load-config []
   (let [config       (load-edn "config.edn")
-        local-config (load-edn! "config.local.edn")]
-    (merge config local-config)))
+        local-config (load-edn! "config.local.edn")
+        merged       (merge config local-config)]
+    (if (s/valid? ::config merged)
+      merged
+      (throw (ex-info (s/explain-str ::config merged)
+                      (s/explain-data ::config merged))))))
+
+(comment
+  (metrics-server.config/load-config)
+  (s/explain ::config config)
+  (let [config       (load-edn "config.edn")
+        local-config (load-edn! "config.local.edn")
+        merged       (merge config local-config)]
+    (s/explain ::config merged)))
