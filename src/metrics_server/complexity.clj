@@ -13,11 +13,11 @@
   (some? (:value entry)))
 
 (defn- categorize-complexity-number
-  [entry {:keys [complexity-orange-threshold complexity-red-threshold]}]
+  [entry {:keys [complexity/orange-threshold complexity/red-threshold]}]
   (let [value (:value entry)]
     (condp < value
-      complexity-orange-threshold :green
-      complexity-red-threshold    :orange
+      orange-threshold :green
+      red-threshold    :orange
       :red)))
 
 (defn categorize [metrics-data config]

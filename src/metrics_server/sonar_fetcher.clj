@@ -22,9 +22,9 @@
 (defn fetch-file-tree-metric
   ([metric config] (fetch-file-tree-metric metric config 1))
   ([metric config page]
-   (let [project-id (:sonar-project-id config)
-         page-size  (:page-size config)
-         token      (:sonar-token config)
+   (let [project-id (:sonar/project-id config)
+         page-size  (:fetch/page-size config)
+         token      (:sonar/token config)
          response   (raw-metric-page project-id metric page page-size token)
          measures   (:body response)
          parsed     (json/read-str measures :key-fn keyword)
@@ -42,8 +42,8 @@
                               :metricKeys metrics}}))
 
 (defn fetch-project-metrics [metrics config]
-  (let [project-id (:sonar-project-id config)
-        token      (:sonar-token config)
+  (let [project-id (:sonar/project-id config)
+        token      (:sonar/token config)
         response   (raw-metrics project-id (str/join "," metrics) token)
         measures   (:body response)
         parsed     (json/read-str measures :key-fn keyword)]
@@ -53,7 +53,7 @@
   (require '[clojure.string :as str])
   (def config (metrics-server.config/load-config))
   (client/get (url measures-component)
-              {:basic-auth   (str (:sonar-token config) ":")
-               :query-params {:component  (:sonar-project-id config)
+              {:basic-auth   (str (:sonar/token config) ":")
+               :query-params {:component  (:sonar/project-id config)
                               :metricKeys "ncloc,new_coverage"}})
   (fetch-project-metrics ["ncloc" "new_coverage"] config))

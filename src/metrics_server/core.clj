@@ -20,7 +20,7 @@
         complexity      (complexity/categorize complexity-data config)
         commit-data     (gitlab/fetch-commit-details config)
         churn           (churn/summarize commit-data)]
-    (println "SonarQube project key:" (:sonar-project-id config))
+    (println "SonarQube project key:" (:sonar/project-id config))
     (println "Complexity:")
     (println "  Number of files:" (:files sonar-metrics))
     (println "  Sum of complexity:" (:complexity sonar-metrics))

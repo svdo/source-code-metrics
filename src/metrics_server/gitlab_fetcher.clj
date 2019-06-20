@@ -58,8 +58,8 @@
          to   last-monday]
      (fetch-commit-details from to config)))
   ([from to config]
-   (let [project-id (:gitlab-project-id config)
-         token      (:gitlab-token config)]
+   (let [project-id (:gitlab/project-id config)
+         token      (:gitlab/token config)]
      (parse-measures project-id from to token))))
 
 (comment
@@ -69,10 +69,10 @@
     (-> before-last-monday
         (.with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
-  (parse-measures (:gitlab-project-id config)
-                  before-before-last-monday
+  (parse-measures (:gitlab/project-id config)
                   before-last-monday
-                  (:gitlab-token config))
+                  last-monday
+                  (:gitlab/token config))
 
   (fetch-commit-details config)
   (fetch-commit-details before-before-last-monday
