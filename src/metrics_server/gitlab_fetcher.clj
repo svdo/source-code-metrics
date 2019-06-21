@@ -68,10 +68,12 @@
     (-> before-last-monday
         (.with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
-  (parse-measures (:gitlab/project-id config)
-                  before-last-monday
-                  last-monday
-                  (:gitlab/token config))
+  (let [project-id (:gitlab/project-id config)]
+    (parse-measures project-id
+                    before-last-monday
+                    last-monday
+                    (:gitlab/token config)
+                    (url config (commits project-id))))
 
   (fetch-commit-details config)
   (fetch-commit-details before-before-last-monday

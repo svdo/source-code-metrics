@@ -36,8 +36,8 @@
                       (s/explain-data ::config merged))))))
 
 (comment
-  (metrics-server.config/load-config)
-  (s/explain ::config config)
+  (def config (metrics-server.config/load-config))
+  (e/expound ::config config)
   (let [config       (load-edn "config.edn")
         local-config (load-edn! "config.local.edn")
         merged       (merge config local-config)]
