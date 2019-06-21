@@ -2,10 +2,18 @@
   (:require [metrics-server.load-edn :refer (load-edn load-edn!)]
             [clojure.spec.alpha :as s]))
 
+(import (org.apache.commons.validator.routines UrlValidator))
+
+(def valid-url? #(.isValid (UrlValidator.) %))
+
+(s/def :sonar/base-url valid-url?)
 (s/def :sonar/token (s/and string? (complement empty?)))
 (s/def :sonar/project-id (s/and string? (complement empty?)))
+
+(s/def :gitlab/base-url valid-url?)
 (s/def :gitlab/token (s/and string? (complement empty?)))
 (s/def :gitlab/project-id pos-int?)
+
 (s/def ::config
   (s/keys :req [:sonar/token
                 :sonar/project-id
