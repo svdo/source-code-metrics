@@ -16,8 +16,10 @@
 (s/def :gitlab/project-id pos-int?)
 
 (s/def ::config
-  (s/keys :req [:sonar/token
+  (s/keys :req [:sonar/base-url
+                :sonar/token
                 :sonar/project-id
+                :gitlab/base-url
                 :gitlab/token
                 :gitlab/project-id
                 :fetch/page-size
