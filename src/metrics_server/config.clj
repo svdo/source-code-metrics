@@ -1,6 +1,7 @@
 (ns metrics-server.config
   (:require [metrics-server.load-edn :refer (load-edn load-edn!)]
-            [clojure.spec.alpha :as s]))
+            [clojure.spec.alpha :as s]
+            [expound.alpha :as e]))
 
 (import (org.apache.commons.validator.routines UrlValidator))
 
@@ -29,7 +30,7 @@
         merged       (merge config local-config)]
     (if (s/valid? ::config merged)
       merged
-      (throw (ex-info (s/explain-str ::config merged)
+      (throw (ex-info (e/expound-str ::config merged)
                       (s/explain-data ::config merged))))))
 
 (comment

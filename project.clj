@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [clj-http "3.10.0"]
                  [org.clojure/data.json "0.2.6"]
-                 [commons-validator "1.6"]]
+                 [commons-validator "1.6"]
+                 [expound "0.7.2"]]
   :main ^:skip-aot metrics-server.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
