@@ -1,9 +1,8 @@
 (ns metrics-server.config
   (:require [metrics-server.load-edn :refer (load-edn load-edn!)]
             [clojure.spec.alpha :as s]
-            [expound.alpha :as e]))
-
-(import (org.apache.commons.validator.routines UrlValidator))
+            [expound.alpha :as e])
+  (:import org.apache.commons.validator.routines.UrlValidator))
 
 (def valid-url? #(.isValid (UrlValidator.) %))
 
