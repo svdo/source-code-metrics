@@ -12,11 +12,14 @@ project key. The token must be generated in SonarQube (My Account -> Security
 generate that token by navigating in GitLab to Account -> Settings ->
 Access Tokens. Enable the scope 'api' for this token.
 
-In order to keep your secrets safe, you may choose to put them in
+In order to keep your secrets safe, you may should put them in
 `config.local.edn` instead of `config.edn`. The two maps are merged, where
 the anything in the `local` one will overwrite the other. The file
 `config.local.edn` is ignored by git, so this way you don't have to fear
-accidentally committing your secrets to git.
+accidentally committing your secrets to git. So before running this,
+you should create `config.local.edn` and put all the Gitlab and SonarQube
+information in there by copying those six lines from `config.edn` and
+filling in their values.
 
 Running
 -------

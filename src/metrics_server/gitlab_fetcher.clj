@@ -22,7 +22,7 @@
   (-> last-monday
       (.with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
-(defn- url [endpoint] (str "<redacted>" endpoint))
+(defn- url [config endpoint] (str (:gitlab/base-url config) endpoint))
 (defn- commits [project-id]
   (format "/projects/%s/repository/commits" project-id))
 
@@ -35,22 +35,20 @@
     (reduce merge {} (mapv parse-link links))))
 
 (defn- parse-measures
-  ([project-id from to token]
-   (parse-measures project-id from to token (url (commits project-id))))
-  ([project-id from to token commits-page-url]
-   (let [response (client/get commits-page-url
-                              {:query-params {:private_token token
-                                              :since         (date-to-string from)
-                                              :until         (date-to-string to)
-                                              :with_stats    true
-                                              :per_page      100}})
-         headers  (:headers response)
-         links    (parse-link-header (headers "link"))
-         measures (:body response)
-         parsed   (json/read-str measures :key-fn keyword)]
-     (if-let [next (:next links)]
-       (concat parsed (parse-measures project-id from to token next))
-       parsed))))
+  [project-id from to token commits-url]
+  (let [response (client/get commits-url
+                             {:query-params {:private_token token
+                                             :since         (date-to-string from)
+                                             :until         (date-to-string to)
+                                             :with_stats    true
+                                             :per_page      100}})
+        headers  (:headers response)
+        links    (parse-link-header (headers "link"))
+        measures (:body response)
+        parsed   (json/read-str measures :key-fn keyword)]
+    (if-let [next (:next links)]
+      (concat parsed (parse-measures project-id from to token next))
+      parsed)))
 
 (defn fetch-commit-details
   ([config]
@@ -60,7 +58,8 @@
   ([from to config]
    (let [project-id (:gitlab/project-id config)
          token      (:gitlab/token config)]
-     (parse-measures project-id from to token))))
+     (parse-measures project-id from to token
+                     (url config (commits project-id))))))
 
 (comment
   (def config (metrics-server.config/load-config))

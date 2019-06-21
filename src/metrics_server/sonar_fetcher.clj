@@ -3,12 +3,13 @@
             [clojure.string :as str]
             [clojure.data.json :as json]))
 
-(defn- url [endpoint] (str "<redacted>" endpoint))
+(defn- url [config endpoint] (str (:sonar/base-url config) endpoint))
 (def ^:private measures-component "/api/measures/component")
 (def ^:private measures-component-tree "/api/measures/component_tree")
 
-(defn- raw-metric-page [project-id metric page page-size token]
-  (client/get (url measures-component-tree)
+(defn- raw-metric-page
+  [measures-component-tree-url project-id metric page page-size token]
+  (client/get measures-component-tree-url
               {:basic-auth   (str token ":")
                :query-params {:component  project-id
                               :metricKeys metric
@@ -25,7 +26,8 @@
    (let [project-id (:sonar/project-id config)
          page-size  (:fetch/page-size config)
          token      (:sonar/token config)
-         response   (raw-metric-page project-id metric page page-size token)
+         response   (raw-metric-page (url config measures-component-tree)
+                                     project-id metric page page-size token)
          measures   (:body response)
          parsed     (json/read-str measures :key-fn keyword)
          this-page  (:components parsed)]
@@ -35,8 +37,8 @@
                (fetch-file-tree-metric metric config (inc page))
                this-page)))))
 
-(defn- raw-metrics [project-id metrics token]
-  (client/get (url measures-component)
+(defn- raw-metrics [measures-component-url project-id metrics token]
+  (client/get measures-component-url
               {:basic-auth   (str token ":")
                :query-params {:component  project-id
                               :metricKeys metrics}}))
@@ -44,7 +46,8 @@
 (defn fetch-project-metrics [metrics config]
   (let [project-id (:sonar/project-id config)
         token      (:sonar/token config)
-        response   (raw-metrics project-id (str/join "," metrics) token)
+        response   (raw-metrics (url config measures-component)
+                                project-id (str/join "," metrics) token)
         measures   (:body response)
         parsed     (json/read-str measures :key-fn keyword)]
     (:component parsed)))
@@ -52,7 +55,7 @@
 (comment
   (require '[clojure.string :as str])
   (def config (metrics-server.config/load-config))
-  (client/get (url measures-component)
+  (client/get (url config measures-component)
               {:basic-auth   (str (:sonar/token config) ":")
                :query-params {:component  (:sonar/project-id config)
                               :metricKeys "ncloc,new_coverage"}})

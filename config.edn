@@ -1,7 +1,12 @@
-{:sonar/token                 ""    ;; your SonarQube access token
+{:sonar/base-url              ""    ;; url to your SonarQube API, e.g. https://sonar.mydomain.com
+ :sonar/token                 ""    ;; your SonarQube access token
  :sonar/project-id            ""    ;; your SonarQube project key
+
+ :gitlab/base-url             ""    ;; url to your GitLab API, e.g. https://gitlab.mydomain.com/api/v4
  :gitlab/token                ""    ;; your GitLab personal access token
  :gitlab/project-id           0     ;; your GitLab project ID number
+
  :fetch/page-size             100
+
  :complexity/orange-threshold 9
  :complexity/red-threshold    15}
