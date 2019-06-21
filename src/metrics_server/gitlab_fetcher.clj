@@ -6,21 +6,26 @@
            java.time.format.DateTimeFormatter
            java.time.temporal.TemporalAdjusters
            java.time.LocalDate
-           java.time.DayOfWeek))
+           java.time.DayOfWeek
+           java.time.temporal.Temporal))
 
-(def zone-id (ZoneId/systemDefault))
+(def ^ZoneId zone-id (ZoneId/systemDefault))
 (def formatter (DateTimeFormatter/ISO_OFFSET_DATE_TIME))
-(defn date-to-string [date-time]
-  (-> date-time
-      (.atStartOfDay)
-      (.atZone zone-id)
-      (.format formatter)))
-(def last-monday
-  (-> (LocalDate/now)
-      (.with (TemporalAdjusters/previousOrSame DayOfWeek/MONDAY))))
+
+(defn date-to-string [^LocalDate date-time]
+  (.. date-time
+      (atStartOfDay)
+      (atZone zone-id)
+      (format formatter)))
+
+(def ^Temporal last-monday
+  (.. LocalDate
+      (now)
+      (with (TemporalAdjusters/previousOrSame DayOfWeek/MONDAY))))
+
 (def before-last-monday
-  (-> last-monday
-      (.with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
+  (.. last-monday
+      (with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
 (defn- url [config endpoint] (str (:gitlab/base-url config) endpoint))
 (defn- commits [project-id]
@@ -65,8 +70,8 @@
   (def config (metrics-server.config/load-config))
 
   (def before-before-last-monday
-    (-> before-last-monday
-        (.with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
+    (.. before-last-monday
+        (with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
   (let [project-id (:gitlab/project-id config)]
     (parse-measures project-id
