@@ -22,6 +22,7 @@
         complexity          (complexity/categorize complexity-data project-with-config)
         commit-data         (gitlab/fetch-commit-details project-with-config)
         churn               (churn/summarize commit-data)]
+    (println "--------------------------------------------------------------")
     (println "SonarQube project key:" (:sonar/project-id project-with-config))
     (println "Complexity:")
     (println "  Number of files:" (:files sonar-metrics))
@@ -42,4 +43,4 @@
 (defn -main []
   (let [config   (load-config)
         projects (:report/projects config)]
-    (print-project-report config (first projects))))
+    (doall (map (partial print-project-report config) projects))))
