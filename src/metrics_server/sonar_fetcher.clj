@@ -53,7 +53,6 @@
     (:component parsed)))
 
 (comment
-  (require '[clojure.string :as str])
   (def config (metrics-server.config/load-config))
   (client/get (url config measures-component)
               {:basic-auth   (str (:sonar/token config) ":")
