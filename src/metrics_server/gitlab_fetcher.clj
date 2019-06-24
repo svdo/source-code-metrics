@@ -9,13 +9,12 @@
            java.time.DayOfWeek
            java.time.temporal.Temporal))
 
-(def ^ZoneId zone-id (ZoneId/systemDefault))
 (def formatter (DateTimeFormatter/ISO_OFFSET_DATE_TIME))
 
 (defn date-to-string [^LocalDate date-time]
   (.. date-time
       (atStartOfDay)
-      (atZone zone-id)
+      (atZone ^ZoneId (ZoneId/systemDefault))
       (format formatter)))
 
 (defn ^Temporal last-monday []
