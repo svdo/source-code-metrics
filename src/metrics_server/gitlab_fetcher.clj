@@ -67,19 +67,21 @@
 
 (comment
   (def config (metrics-server.config/load-config))
+  (def first-project (first (:report/projects config)))
+  (def first-project-config (merge (dissoc config :report/projects) first-project))
 
   (defn before-before-last-monday []
     (.. (before-last-monday)
         (with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
-  (let [project-id (:gitlab/project-id config)]
+  (let [project-id (:gitlab/project-id first-project-config)]
     (parse-measures project-id
                     (before-last-monday)
                     (last-monday)
-                    (:gitlab/token config)
-                    (url config (commits project-id))))
+                    (:gitlab/token first-project-config)
+                    (url first-project-config (commits project-id))))
 
-  (fetch-commit-details config)
+  (fetch-commit-details first-project-config)
   (fetch-commit-details (before-before-last-monday)
                         (before-last-monday)
-                        config))
+                        first-project-config))

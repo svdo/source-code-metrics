@@ -54,8 +54,10 @@
 
 (comment
   (def config (metrics-server.config/load-config))
+  (def first-project (first (:report/projects config)))
+  (def first-project-config (merge (dissoc config :report/projects) first-project))
   (client/get (url config measures-component)
-              {:basic-auth   (str (:sonar/token config) ":")
-               :query-params {:component  (:sonar/project-id config)
+              {:basic-auth   (str (:sonar/token first-project) ":")
+               :query-params {:component  (:sonar/project-id first-project)
                               :metricKeys "ncloc,new_coverage,vulnerabilities"}})
-  (fetch-project-metrics ["ncloc" "new_coverage" "vulnerabilities"] config))
+  (fetch-project-metrics ["ncloc" "new_coverage" "vulnerabilities"] first-project-config))
