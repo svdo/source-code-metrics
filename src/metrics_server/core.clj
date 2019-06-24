@@ -23,7 +23,9 @@
         commit-data         (gitlab/fetch-commit-details project-with-config)
         churn               (churn/summarize commit-data)]
     (println "--------------------------------------------------------------")
-    (println "SonarQube project key:" (:sonar/project-id project-with-config))
+    (println "Project:"
+             (:name sonar-data)
+             (str "(" (:sonar/project-id project-with-config) ")"))
     (println "Complexity:")
     (println "  Number of files:" (:files sonar-metrics))
     (println "  Sum of complexity:" (:complexity sonar-metrics))
