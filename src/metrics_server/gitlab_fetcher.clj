@@ -18,13 +18,13 @@
       (atZone zone-id)
       (format formatter)))
 
-(def ^Temporal last-monday
+(defn ^Temporal last-monday []
   (.. LocalDate
       (now)
       (with (TemporalAdjusters/previousOrSame DayOfWeek/MONDAY))))
 
-(def before-last-monday
-  (.. last-monday
+(defn before-last-monday []
+  (.. (last-monday)
       (with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
 (defn- url [config endpoint] (str (:gitlab/base-url config) endpoint))
@@ -57,8 +57,8 @@
 
 (defn fetch-commit-details
   ([config]
-   (let [from before-last-monday
-         to   last-monday]
+   (let [from (before-last-monday)
+         to   (last-monday)]
      (fetch-commit-details from to config)))
   ([from to config]
    (let [project-id (:gitlab/project-id config)
@@ -69,18 +69,18 @@
 (comment
   (def config (metrics-server.config/load-config))
 
-  (def before-before-last-monday
-    (.. before-last-monday
+  (defn before-before-last-monday []
+    (.. (before-last-monday)
         (with (TemporalAdjusters/previous DayOfWeek/MONDAY))))
 
   (let [project-id (:gitlab/project-id config)]
     (parse-measures project-id
-                    before-last-monday
-                    last-monday
+                    (before-last-monday)
+                    (last-monday)
                     (:gitlab/token config)
                     (url config (commits project-id))))
 
   (fetch-commit-details config)
-  (fetch-commit-details before-before-last-monday
-                        before-last-monday
+  (fetch-commit-details (before-before-last-monday)
+                        (before-last-monday)
                         config))
