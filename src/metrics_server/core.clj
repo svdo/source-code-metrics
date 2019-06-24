@@ -14,7 +14,7 @@
 
 (defn -main []
   (let [config          (load-config)
-        sonar-data      (sonar/fetch-project-metrics ["files" "complexity" "coverage" "new_coverage"] config)
+        sonar-data      (sonar/fetch-project-metrics ["files" "complexity" "coverage" "new_coverage" "vulnerabilities"] config)
         sonar-metrics   (project/metrics sonar-data)
         complexity-data (sonar/fetch-file-tree-metric "complexity" config)
         complexity      (complexity/categorize complexity-data config)
@@ -30,6 +30,8 @@
     (println "Coverage:")
     (println "  overall:" (format-if-present (:coverage sonar-metrics)))
     (println "  new code:" (format-if-present (:new-coverage sonar-metrics)))
+    (println "Security:")
+    (println "  vulnerabilities:" (:vulnerabilities sonar-metrics))
     (println "Churn:")
     (println "  number of commits:" (format "%d" (:count churn)))
     (println "  number of lines added:" (format "%d" (:lines-added churn)))

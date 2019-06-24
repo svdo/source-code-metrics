@@ -57,5 +57,5 @@
   (client/get (url config measures-component)
               {:basic-auth   (str (:sonar/token config) ":")
                :query-params {:component  (:sonar/project-id config)
-                              :metricKeys "ncloc,new_coverage"}})
-  (fetch-project-metrics ["ncloc" "new_coverage"] config))
+                              :metricKeys "ncloc,new_coverage,vulnerabilities"}})
+  (fetch-project-metrics ["ncloc" "new_coverage" "vulnerabilities"] config))
