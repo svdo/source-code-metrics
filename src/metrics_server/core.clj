@@ -12,11 +12,8 @@
     (format "%.1f" flt)
     "n/a"))
 
-(defn -main []
-  (let [config              (load-config)
-        projects            (:report/projects config)
-        project             (first projects)
-        project-with-config (merge (dissoc config :report/projects) project)
+(defn- print-project-report [config project]
+  (let [project-with-config (merge (dissoc config :report/projects) project)
         sonar-data          (sonar/fetch-project-metrics
                              ["files" "complexity" "coverage" "new_coverage" "vulnerabilities"]
                              project-with-config)
@@ -41,3 +38,8 @@
     (println "  number of commits:" (format "%d" (:count churn)))
     (println "  number of lines added:" (format "%d" (:lines-added churn)))
     (println "  number of lines deleted:" (format "%d" (:lines-deleted churn)))))
+
+(defn -main []
+  (let [config   (load-config)
+        projects (:report/projects config)]
+    (print-project-report config (first projects))))
