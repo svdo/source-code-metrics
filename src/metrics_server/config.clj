@@ -14,16 +14,22 @@
 (s/def :gitlab/token (s/and string? (complement empty?)))
 (s/def :gitlab/project-id pos-int?)
 
+(s/def :report/project
+  (s/keys :req [:sonar/token
+                :sonar/project-id
+                :gitlab/token
+                :gitlab/project-id]))
+
+(s/def :report/projects
+  (s/+ :report/project))
+
 (s/def ::config
   (s/keys :req [:sonar/base-url
-                :sonar/token
-                :sonar/project-id
                 :gitlab/base-url
-                :gitlab/token
-                :gitlab/project-id
                 :fetch/page-size
                 :complexity/orange-threshold
-                :complexity/red-threshold]))
+                :complexity/red-threshold
+                :report/projects]))
 
 (defn load-config []
   (let [config       (load-edn "config.edn")
@@ -40,4 +46,4 @@
   (let [config       (load-edn "config.edn")
         local-config (load-edn! "config.local.edn")
         merged       (merge config local-config)]
-    (s/explain ::config merged)))
+    (e/expound ::config merged)))

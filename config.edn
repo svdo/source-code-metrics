@@ -1,12 +1,18 @@
-{:sonar/base-url              ""    ;; url to your SonarQube API, e.g. https://sonar.mydomain.com
- :sonar/token                 ""    ;; your SonarQube access token
- :sonar/project-id            ""    ;; your SonarQube project key
-
- :gitlab/base-url             ""    ;; url to your GitLab API, e.g. https://gitlab.mydomain.com/api/v4
- :gitlab/token                ""    ;; your GitLab personal access token
- :gitlab/project-id           0     ;; your GitLab project ID number
-
- :fetch/page-size             100
+{:fetch/page-size             100
 
  :complexity/orange-threshold 9
- :complexity/red-threshold    15}
+ :complexity/red-threshold    15
+
+ :sonar/base-url              ""    ;; url to your SonarQube API, e.g. https://sonar.mydomain.com
+ :gitlab/base-url             ""    ;; url to your GitLab API, e.g. https://gitlab.mydomain.com/api/v4
+
+ ;; List of projects to be reported. Each project is a hashmap of the following
+ ;; structure:
+ ;;
+ ;; {:sonar/token       ""    ;; your SonarQube access token
+ ;;  :sonar/project-id  ""    ;; your SonarQube project key
+ ;;
+ ;;  :gitlab/token      ""    ;; your GitLab personal access token
+ ;;  :gitlab/project-id 0     ;; your GitLab project ID number
+ ;; }
+ :report/projects             []}

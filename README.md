@@ -18,8 +18,25 @@ the anything in the `local` one will overwrite the other. The file
 `config.local.edn` is ignored by git, so this way you don't have to fear
 accidentally committing your secrets to git. So before running this,
 you should create `config.local.edn` and put all the Gitlab and SonarQube
-information in there by copying those six lines from `config.edn` and
-filling in their values.
+information in there by following the instructions in `config.edn`. For example,
+your final `config.local.edn` when you want to report on two different projects
+should look like this:
+
+```edn
+{:sonar/base-url      "https://sonar.example.com"
+ :gitlab/base-url     "https://gitlab.example.com/api/v4"
+
+ :report/projects
+ [{:sonar/token       "abcdefghijklmnopqrstuvwxyz"
+   :sonar/project-id  "my.project-id"
+   :gitlab/token      "aBCdeFGHijkLMN"
+   :gitlab/project-id 42}
+
+  {:sonar/token       "zyxwvutsrqponmlkjihgfedcba"
+   :sonar/project-id  "my.other-project-id"
+   :gitlab/token      "NMLkjiHGFedCBa"
+   :gitlab/project-id 24}]}
+```
 
 Running
 -------
