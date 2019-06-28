@@ -3,6 +3,14 @@ Metrics
 
 This program can automatically collect metrics for a given project.
 
+Purpose
+-------
+
+This project should be viewed as a personal tool, not necessarily intended
+for other purposes than mine. For me, it's both useful and a great vehicle
+to learn Clojure better. Having said that, you're of course welcome to
+use it if you see value in it.
+
 Configuration
 -------------
 
