@@ -57,5 +57,5 @@ Unit Tests
 ----------
 
 ```bash
-./test.sh
+./test.sh --watch
 ```
