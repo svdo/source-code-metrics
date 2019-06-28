@@ -50,24 +50,12 @@ Running
 -------
 
 ```bash
-lein run
+./run.sh
 ```
-
 
 Unit Tests
 ----------
 
 ```bash
-lein test
-```
-
-*Note:* See https://github.com/venantius/ultra/issues/108. This project uses
-Ultra for better test support, but there is currently an open issue on a
-dependency of Ultra. Bottom line: it works when using Java 8 (and probably
-any Java before 12).
-
-Global Leiningen configuration for Ultra is done in `~/.lein/profiles.clj`:
-
-```clojure
-{:user {:plugins [[venantius/ultra "0.6.0"]]}}
+./test.sh
 ```

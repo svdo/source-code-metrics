@@ -1,0 +1,10 @@
+{:deps
+ {clj-http {:mvn/version "3.10.0"}
+  org.clojure/data.json {:mvn/version "0.2.6"}
+  commons-validator {:mvn/version "1.6"}
+  expound {:mvn/version "0.7.2"}}
+
+ :aliases
+ {:run {:main-opts ["-m" "metrics-server.core"]}
+  :test {:extra-paths ["test"]
+         :extra-deps {lambdaisland/kaocha {:mvn/version "0.0-521"}}}}}
