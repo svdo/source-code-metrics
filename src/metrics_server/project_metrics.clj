@@ -6,7 +6,8 @@
                               (read-string v)])))
 
 (defn- extract-relevant-fields [metric-dict]
-  {(keyword (:metric metric-dict)) (or (:value metric-dict) (:value (first (:periods metric-dict))))})
+  {(keyword (:metric metric-dict))
+   (or (:value metric-dict) (:value (first (:periods metric-dict))))})
 
 (defn metrics [metrics-data]
   (->> (:measures metrics-data)
