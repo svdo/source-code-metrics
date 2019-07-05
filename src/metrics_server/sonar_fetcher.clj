@@ -60,4 +60,5 @@
               {:basic-auth   (str (:sonar/token first-project) ":")
                :query-params {:component  (:sonar/project-id first-project)
                               :metricKeys "ncloc,new_coverage,vulnerabilities"}})
-  (fetch-project-metrics ["ncloc" "new_coverage" "vulnerabilities"] first-project-config))
+  (fetch-project-metrics ["ncloc" "new_coverage" "vulnerabilities"] first-project-config)
+  (fetch-file-tree-metric "complexity" first-project-config))
