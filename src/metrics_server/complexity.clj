@@ -1,4 +1,6 @@
-(ns metrics-server.complexity)
+(ns metrics-server.complexity
+  (:require [clojure.spec.alpha :as s]
+            [expound.alpha :as e]))
 
 (defn- extract-relevant-fields [{:keys             [key name]
                                  [{:keys [value]}] :measures}]
@@ -20,8 +22,29 @@
       red-threshold    :orange
       :red)))
 
+(s/def :complexity/metric (partial = "complexity"))
+(s/def :complexity/value
+  (s/and string? (comp int? read-string)))
+(s/def :complexity/measure
+  (s/keys :req-un [:complexity/metric
+                   :complexity/value]))
+(s/def :complexity/measures
+  (s/coll-of :complexity/measure))
+(s/def :complexity/entry
+  (s/keys :req-un [:complexity/key
+                   :complexity/name
+                   :complexity/measures]))
+(s/def :complexity/entries
+  (s/coll-of :complexity/entry))
+
+(defn- check-valid [metrics-data]
+  (if (s/valid? :complexity/entries metrics-data)
+    metrics-data
+    (throw (ex-info (e/expound-str :complexity/entries metrics-data)
+                    (s/explain-data :complexity/entries metrics-data)))))
+
 (defn categorize [metrics-data config]
-  (let [interesting-part (map extract-relevant-fields metrics-data)]
+  (let [interesting-part (map extract-relevant-fields (check-valid metrics-data))]
     (->> interesting-part
          (filter has-a-value)
          (map value-string-to-number)
