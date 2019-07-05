@@ -66,7 +66,8 @@
                      (url config (commits project-id))))))
 
 (comment
-  (def config (metrics-server.config/load-config))
+  (require '[metrics-server.config :refer (load-config)])
+  (def config (load-config))
   (def first-project (first (:report/projects config)))
   (def first-project-config (merge (dissoc config :report/projects) first-project))
 
