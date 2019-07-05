@@ -18,13 +18,12 @@
 
 (defn- check-valid [commit-data]
   (if (s/valid? :commit/entries commit-data)
-    :ok
+    commit-data
     (throw (ex-info (e/expound-str :commit/entries commit-data)
                     (s/explain-data :commit/entries commit-data)))))
 
 (defn summarize [commit-data]
-  (check-valid commit-data)
-  (let [interesting-part (->> commit-data
+  (let [interesting-part (->> (check-valid commit-data)
                               (filter is-not-merge-commit?)
                               (map extract-relevant-fields))
         lines-added      (reduce + (map :additions interesting-part))
