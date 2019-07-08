@@ -10,9 +10,9 @@
       (edn/read (java.io.PushbackReader. r)))
 
     (catch java.io.IOException e
-      (printf "Couldn't open '%s': %s\n" source (.getMessage e)))
+      (throw (ex-info "I/O exception loading edn file" {:file source} e)))
     (catch RuntimeException e
-      (printf "Error parsing edn file '%s': %s\n" source (.getMessage e)))))
+      (throw (ex-info "Error parsing edn file" {:file source} e)))))
 
 (defn load-edn! [source]
   (try
