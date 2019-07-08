@@ -60,14 +60,17 @@
 (defn fetch-commit-details
   ([config]
    (let [from (before-last-monday)
-         to   (last-monday)]
-     (fetch-commit-details from to config)))
-  ([from to config]
+         to   (last-monday)
+         project-id (:gitlab/project-id config)]
+     (fetch-commit-details from to config
+                           (url config (commits project-id))
+                           get-page)))
+  ([from to config commits-url page-getter]
    (let [project-id (:gitlab/project-id config)
          token      (:gitlab/token config)]
      (parse-measures project-id from to token
-                     (url config (commits project-id))
-                     get-page))))
+                     commits-url
+                     page-getter))))
 
 (comment
   (require '[metrics-server.config :refer (load-config)])

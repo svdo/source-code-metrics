@@ -3,6 +3,10 @@
             [metrics-server.gitlab-fetcher :as gitlab]
             [clojure.data.json :as json]))
 
+(def config
+  {:gitlab/project-id :dummy
+   :gitlab/token :dummy})
+
 (defn create-response [content link]
   {:headers {"Link"
              (str "<https://first>; rel=\"first\""
@@ -19,6 +23,7 @@
 
 (deftest gitlab-fetcher-test
   (testing "it combines multiple pages"
-    (let [parse-measures #'gitlab/parse-measures]
-     (is (= [{:a 1} {:b 2} {:c 3}]
-            (parse-measures :dummy :dummy :dummy :dummy "https://first" test-page-getter))))))
+    (is (= [{:a 1} {:b 2} {:c 3}]
+           (gitlab/fetch-commit-details :dummy :dummy config
+                                        "https://first"
+                                        test-page-getter)))))
