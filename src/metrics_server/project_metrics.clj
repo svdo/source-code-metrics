@@ -1,9 +1,10 @@
 (ns metrics-server.project-metrics
   (:require [clojure.string :as str]
             [clojure.spec.alpha :as s]
-            [expound.alpha :as e]))
+            [expound.alpha :as e]
+            [clojure.test.check.generators :as gen]))
 
-(defn- value-string-to-number [dict]
+(defn- value-string->number [dict]
   (into {} (for [[k v] dict] [(keyword (str/replace (name k) "_" "-"))
                               (read-string v)])))
 
@@ -11,16 +12,24 @@
   {(keyword (:metric metric-dict))
    (or (:value metric-dict) (:value (first (:periods metric-dict))))})
 
+(def ^:private value-gen
+  (gen/one-of
+    [(gen/double* {:infinite? false :NaN? false :min 0.0 :max 100.0})
+     (gen/large-integer* {:min 0 :max 100})]))
+
 (s/def :metrics/value
-  (s/and string? #_(comp (or int? float?) read-string)
-         (s/or :int-string (comp int? read-string)
-               :float-string (comp float? read-string))))
+  (s/with-gen
+    (s/and string? #_(comp (or int? float?) read-string)
+           (s/or :int-string (comp int? read-string)
+                 :float-string (comp float? read-string)))
+    #(gen/fmap str value-gen)))
+(s/def :metrics/metric #{"files" "complexity" "coverage" "ncloc" "new_coverage" "vulnerabilities"})
 (s/def :metrics/period
   (s/keys :opt-un [:metrics/value]))
 (s/def :metrics/periods (s/coll-of :metrics/period))
 (s/def :metrics/measure
   (s/and
-   (s/keys :req-un [::metric]
+   (s/keys :req-un [:metrics/metric]
            :opt-un [:metrics/value
                     :metrics/periods])
    (s/or :measure-value #(:value %)
@@ -38,38 +47,5 @@
 (defn metrics [metrics-data]
   (->> (:measures (valid-data metrics-data))
        (map extract-relevant-fields)
-       (map value-string-to-number)
+       (map value-string->number)
        (reduce merge)))
-
-(comment
-  (def sample-1
-    {:id        "sample-1-id"
-     :key       "sample-1-key"
-     :name      "Sample 1 Name"
-     :qualifier "SA1"
-     :measures  [{:metric  "new_coverage"
-                  :periods [{:index     1
-                             :value     "89.6428571428571"
-                             :bestValue false}]}
-                 {:metric  "ncloc"
-                  :value   "5044"
-                  :periods [{:index 1
-                             :value "210"}]}]})
-  (def sample-2
-    {:id        "sample-2-id"
-     :key       "sample-2-key"
-     :name      "Sample 2 Name"
-     :qualifier "SA2"
-     :measures  [{:metric  "new_coverage"
-                  :periods [{:index     1
-                             :value     "89.6428571428571"
-                             :bestValue false}]}
-                 {:metric    "coverage"
-                  :value     "73.5"
-                  :periods   [{:index     1
-                               :value     "33.6"
-                               :bestValue false}]
-                  :bestValue false}]})
-
-  (metrics sample-1)
-  (metrics sample-2))
