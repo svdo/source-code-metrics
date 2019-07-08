@@ -39,20 +39,23 @@
     (reduce merge {} (mapv parse-link links))))
 
 (defn- parse-measures
-  [project-id from to token commits-url]
-  (let [response (client/get commits-url
-                             {:query-params {:private_token token
-                                             :since         (date->string from)
-                                             :until         (date->string to)
-                                             :with_stats    true
-                                             :per_page      100}})
+  [project-id from to token commits-url page-getter]
+  (let [response (page-getter from to token commits-url)
         headers  (:headers response)
-        links    (parse-link-header (headers "link"))
+        links    (parse-link-header (headers "Link"))
         measures (:body response)
         parsed   (json/read-str measures :key-fn keyword)]
     (if-let [next (:next links)]
-      (concat parsed (parse-measures project-id from to token next))
+      (concat parsed (parse-measures project-id from to token next page-getter))
       parsed)))
+
+(defn- get-page [from to token page-url]
+  (client/get page-url
+              {:query-params {:private_token token
+                              :since         (date->string from)
+                              :until         (date->string to)
+                              :with_stats    true
+                              :per_page      1}}))
 
 (defn fetch-commit-details
   ([config]
@@ -63,7 +66,8 @@
    (let [project-id (:gitlab/project-id config)
          token      (:gitlab/token config)]
      (parse-measures project-id from to token
-                     (url config (commits project-id))))))
+                     (url config (commits project-id))
+                     get-page))))
 
 (comment
   (require '[metrics-server.config :refer (load-config)])
