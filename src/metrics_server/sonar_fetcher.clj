@@ -44,14 +44,17 @@
                :query-params {:component  project-id
                               :metricKeys metrics}}))
 
-(defn fetch-project-metrics [metrics config]
-  (let [project-id (:sonar/project-id config)
-        token      (:sonar/token config)
-        response   (raw-metrics (url config measures-component)
-                                project-id (str/join "," metrics) token)
-        measures   (:body response)
-        parsed     (json/read-str measures :key-fn keyword)]
-    (:component parsed)))
+(defn fetch-project-metrics
+  ([metrics config]
+   (fetch-project-metrics metrics config raw-metrics))
+  ([metrics config data-getter]
+   (let [project-id (:sonar/project-id config)
+         token      (:sonar/token config)
+         response   (data-getter (url config measures-component)
+                                 project-id (str/join "," metrics) token)
+         measures   (:body response)
+         parsed     (json/read-str measures :key-fn keyword)]
+     (:component parsed))))
 
 (comment
   (require '[metrics-server.config :refer (load-config)])
@@ -62,5 +65,6 @@
               {:basic-auth   (str (:sonar/token first-project) ":")
                :query-params {:component  (:sonar/project-id first-project)
                               :metricKeys "ncloc,new_coverage,vulnerabilities"}})
+  (json/read-str (:body *1) :key-fn keyword)
   (fetch-project-metrics ["ncloc" "new_coverage" "vulnerabilities"] first-project-config)
   (fetch-file-tree-metric "complexity" first-project-config))

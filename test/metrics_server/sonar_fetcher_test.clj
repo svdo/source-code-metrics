@@ -4,7 +4,8 @@
             [clojure.data.json :as json]))
 
 (def config
-  {:sonar/project-id :dummy
+  {:sonar/base-url ""
+   :sonar/project-id :dummy
    :fetch/page-size 2
    :sonar/token :dummy})
 
@@ -19,7 +20,15 @@
    (json/write-str {:paging {:pageIndex page, :pageSize page-size :total 5}
                     :components (create-content page)})})
 
+(defn test-data-getter [_ _ _ _]
+  {:body
+   (json/write-str {:component {:a 1}})})
+
 (deftest sonar-fetcher-test
   (testing "it combines multiple pages"
     (is (= [{:a 1} {:b 2} {:c 3} {:d 4} {:e 5}]
-           (sonar/fetch-file-tree-metric :dummy config 1 test-page-getter)))))
+           (sonar/fetch-file-tree-metric :dummy config 1 test-page-getter))))
+
+  (testing "it parses project metrics"
+    (is (= {:a 1}
+           (sonar/fetch-project-metrics ["ncloc"] config test-data-getter)))))
