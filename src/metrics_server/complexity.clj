@@ -52,10 +52,12 @@
 
 (defn categorize [metrics-data config]
   (let [interesting-part (map extract-relevant-fields (check-valid metrics-data))]
-    (->> interesting-part
-         (filter has-a-value)
-         (map value-string-to-number)
-         (map #(assoc % :category (categorize-complexity-number % config)))
-         (sort-by :value)
-         (reverse)
-         (group-by :category))))
+    (merge
+      {:green [] :orange [] :red []}
+      (->> interesting-part
+           (filter has-a-value)
+           (map value-string-to-number)
+           (map #(assoc % :category (categorize-complexity-number % config)))
+           (sort-by :value)
+           (reverse)
+           (group-by :category)))))
