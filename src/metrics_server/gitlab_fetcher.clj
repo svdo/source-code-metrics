@@ -11,7 +11,7 @@
 
 (def formatter (DateTimeFormatter/ISO_OFFSET_DATE_TIME))
 
-(defn date-to-string [^LocalDate date-time]
+(defn date->string [^LocalDate date-time]
   (.. date-time
       (atStartOfDay)
       (atZone ^ZoneId (ZoneId/systemDefault))
@@ -42,8 +42,8 @@
   [project-id from to token commits-url]
   (let [response (client/get commits-url
                              {:query-params {:private_token token
-                                             :since         (date-to-string from)
-                                             :until         (date-to-string to)
+                                             :since         (date->string from)
+                                             :until         (date->string to)
                                              :with_stats    true
                                              :per_page      100}})
         headers  (:headers response)

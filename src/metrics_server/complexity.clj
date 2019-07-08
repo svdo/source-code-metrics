@@ -10,7 +10,7 @@
    :name  name
    :value value})
 
-(defn- value-string-to-number [entry]
+(defn- value-string->number [entry]
   (update-in entry [:value] read-string))
 
 (defn- has-a-value [entry]
@@ -56,7 +56,7 @@
       {:green [] :orange [] :red []}
       (->> interesting-part
            (filter has-a-value)
-           (map value-string-to-number)
+           (map value-string->number)
            (map #(assoc % :category (categorize-complexity-number % config)))
            (sort-by :value)
            (reverse)
