@@ -7,5 +7,6 @@
 
  :aliases {:run  {:main-opts   ["-m" "metrics-server.core"]}
            :test {:extra-paths ["test"]
-                  :extra-deps  {lambdaisland/kaocha {:mvn/version "0.0-521"}}
+                  :extra-deps  {lambdaisland/kaocha {:mvn/version "0.0-521"}
+                                lambdaisland/kaocha-cloverage {:mvn/version "0.0-32"}}
                   :main-opts   ["-m" "kaocha.runner"]}}}
