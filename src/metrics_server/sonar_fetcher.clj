@@ -18,24 +18,25 @@
                               :strategy   "leaves"}}))
 
 (defn- is-last-page [{:keys [pageIndex pageSize total]}]
-  (> (* pageIndex pageSize) total))
+  (>= (* pageIndex pageSize) total))
 
 (defn fetch-file-tree-metric
-  ([metric config] (fetch-file-tree-metric metric config 1))
-  ([metric config page]
+  ([metric config] (fetch-file-tree-metric metric config 1 raw-metric-page))
+  ([metric config page page-getter]
    (let [project-id (:sonar/project-id config)
          page-size  (:fetch/page-size config)
          token      (:sonar/token config)
-         response   (raw-metric-page (url config measures-component-tree)
-                                     project-id metric page page-size token)
+         response   (page-getter (url config measures-component-tree)
+                                 project-id metric page page-size token)
          measures   (:body response)
          parsed     (json/read-str measures :key-fn keyword)
          this-page  (:components parsed)]
      (if (is-last-page (:paging parsed))
        this-page
        (reduce conj
-               (fetch-file-tree-metric metric config (inc page))
-               this-page)))))
+               this-page
+               (fetch-file-tree-metric metric config (inc page) page-getter))))))
+
 
 (defn- raw-metrics [measures-component-url project-id metrics token]
   (client/get measures-component-url
