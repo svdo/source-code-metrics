@@ -26,4 +26,7 @@
   (testing "it contains red"
     (let [sample (gen/generate (s/gen :complexity/entries))
           categorized (complexity/categorize sample config)]
-      (is (:red categorized)))))
+      (is (:red categorized))))
+
+  (testing "it throws on invalid input"
+    (is (thrown? RuntimeException (complexity/categorize [{}] config)))))
