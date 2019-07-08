@@ -1,0 +1,4 @@
+;; tests.edn
+#kaocha/v1
+{:plugins [:kaocha.plugin/cloverage]
+ :cloverage/opts {:ns-exclude-regex ["metrics-server.core"]}}
