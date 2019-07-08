@@ -1,6 +1,8 @@
 (ns metrics-server.complexity
   (:require [clojure.spec.alpha :as s]
-            [expound.alpha :as e]))
+            [expound.alpha :as e]
+            #_[clojure.spec.gen.alpha :as gen]
+            [clojure.test.check.generators :as gen]))
 
 (defn- extract-relevant-fields [{:keys             [key name]
                                  [{:keys [value]}] :measures}]
@@ -17,14 +19,19 @@
 (defn- categorize-complexity-number
   [entry {:keys [complexity/orange-threshold complexity/red-threshold]}]
   (let [value (:value entry)]
-    (condp < value
+    (condp >= value
       orange-threshold :green
       red-threshold    :orange
       :red)))
 
-(s/def :complexity/metric (partial = "complexity"))
+(s/def :complexity/key string?)
+(s/def :complexity/name string?)
+(s/def :complexity/metric #{"complexity"})
 (s/def :complexity/value
-  (s/and string? (comp int? read-string)))
+  (s/with-gen
+    (s/and string? (comp int? read-string))
+    #(gen/fmap str (s/gen #{5 15 25}))))
+
 (s/def :complexity/measure
   (s/keys :req-un [:complexity/metric
                    :complexity/value]))
