@@ -15,3 +15,4 @@ config.local.edn
 .idea
 *.iml
 *-sample.edn
+data

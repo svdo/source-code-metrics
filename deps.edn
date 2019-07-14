@@ -3,10 +3,13 @@
            org.clojure/data.json  {:mvn/version "0.2.6"}
            commons-validator      {:mvn/version "1.6"}
            expound                {:mvn/version "0.7.2"}
-           org.clojure/test.check {:mvn/version "0.9.0"}}
+           org.clojure/test.check {:mvn/version "0.9.0"}
+           juxt/crux              {:mvn/version "19.07-1.1.1-alpha"}
+           org.rocksdb/rocksdbjni {:mvn/version "5.17.2"}}
 
- :aliases {:run  {:main-opts   ["-m" "metrics-server.core"]}
+ :aliases {:dev  {:extra-paths ["dev"]}
+           :run  {:main-opts   ["-m" "metrics-server.core"]}
            :test {:extra-paths ["test"]
-                  :extra-deps  {lambdaisland/kaocha {:mvn/version "0.0-521"}
+                  :extra-deps  {lambdaisland/kaocha           {:mvn/version "0.0-521"}
                                 lambdaisland/kaocha-cloverage {:mvn/version "0.0-32"}}
                   :main-opts   ["-m" "kaocha.runner"]}}}

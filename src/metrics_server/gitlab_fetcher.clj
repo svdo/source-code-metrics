@@ -7,7 +7,8 @@
            java.time.temporal.TemporalAdjusters
            java.time.LocalDate
            java.time.DayOfWeek
-           java.time.temporal.Temporal))
+           java.time.temporal.Temporal
+           java.time.temporal.IsoFields))
 
 (def formatter (DateTimeFormatter/ISO_OFFSET_DATE_TIME))
 
@@ -92,4 +93,8 @@
   (fetch-commit-details first-project-config)
   (fetch-commit-details (before-before-last-monday)
                         (before-last-monday)
-                        first-project-config))
+                        first-project-config)
+
+  ;; week number of `last-monday`
+  (.get (last-monday) IsoFields/WEEK_OF_WEEK_BASED_YEAR))
+
