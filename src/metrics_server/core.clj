@@ -12,14 +12,17 @@
     (format "%.1f" flt)
     "n/a"))
 
+(defn- build-complexity-measures [config]
+  (-> (sonar/fetch-file-tree-metric "complexity" config)
+      (complexity/categorize config)))
+
 (defn- print-project-report [config project]
   (let [project-with-config (merge (dissoc config :report/projects) project)
         sonar-data          (sonar/fetch-project-metrics
                              ["files" "complexity" "coverage" "new_coverage" "vulnerabilities"]
                              project-with-config)
         sonar-metrics       (project/metrics sonar-data)
-        complexity-data     (sonar/fetch-file-tree-metric "complexity" project-with-config)
-        complexity          (complexity/categorize complexity-data project-with-config)
+        complexity          (build-complexity-measures project-with-config)
         commit-data         (gitlab/fetch-commit-details project-with-config)
         churn               (churn/summarize commit-data)]
     (println "--------------------------------------------------------------")
