@@ -55,7 +55,7 @@
                               :since         (date->string from)
                               :until         (date->string to)
                               :with_stats    true
-                              :per_page      1}}))
+                              :per_page      100}}))
 
 (defn fetch-commit-details
   ([config]
