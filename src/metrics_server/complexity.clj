@@ -19,13 +19,13 @@
 (defn- categorize-complexity-number
   [entry {:keys [complexity/orange-threshold complexity/red-threshold]}]
   (let [value (:value entry)]
-    (condp >= value
+    (condp > value
       orange-threshold :green
       red-threshold    :orange
       :red)))
 
-(s/def :complexity/key string?)
-(s/def :complexity/name string?)
+(s/def :complexity/key    string?)
+(s/def :complexity/name   string?)
 (s/def :complexity/metric #{"complexity"})
 (s/def :complexity/value
   (s/with-gen
