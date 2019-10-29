@@ -1,7 +1,7 @@
 {:fetch/page-size             100
 
- :complexity/orange-threshold 9
- :complexity/red-threshold    15
+ :complexity/orange-threshold 17
+ :complexity/red-threshold    30
 
  :sonar/base-url              ""    ;; url to your SonarQube API, e.g. https://sonar.mydomain.com
  :gitlab/base-url             ""    ;; url to your GitLab API, e.g. https://gitlab.mydomain.com/api/v4
